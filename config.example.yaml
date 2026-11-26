@@ -1,0 +1,37 @@
+# 模型服务：任何 OpenAI 兼容接口都能加，api_key 从环境变量读取
+providers:
+  openai:
+    base_url: https://api.openai.com/v1
+    api_key_env: OPENAI_API_KEY
+  deepseek:
+    base_url: https://api.deepseek.com/v1
+    api_key_env: DEEPSEEK_API_KEY
+  moonshot:
+    base_url: https://api.moonshot.cn/v1
+    api_key_env: MOONSHOT_API_KEY
+  groq:                        # 提供 Whisper 语音转写，速度快
+    base_url: https://api.groq.com/openai/v1
+    api_key_env: GROQ_API_KEY
+  ollama:                      # NAS/本机上的 Ollama
+    base_url: http://host.docker.internal:11434/v1
+    api_key_env: OLLAMA_API_KEY  # 随便填个值即可
+
+# 语音消息转写（需要支持 /audio/transcriptions 的服务）。不需要就删掉这一段。
+transcription:
+  provider: groq
+  model: whisper-large-v3
+  language: zh
+
+# 联网搜索（模型按需调用）。不需要就删掉这一段，并去掉 compose 里的 searxng。
+search:
+  searxng_url: http://searxng:8080
+  max_results: 5
+
+# 初始 BOT（首次启动时写入数据库；之后可用管理 BOT 在手机上增删改）
+bots:
+  - name: 小助手
+    token_env: BOT_XIAOZHU_TOKEN
+    provider: deepseek
+    model: deepseek-chat
+    system_prompt: 你是一个简洁、靠谱的中文助手。
+    max_history: 20

@@ -1,0 +1,17 @@
+services:
+  botgw:
+    build: .
+    restart: unless-stopped
+    env_file: .env
+    volumes:
+      - ./config.yaml:/app/config.yaml:ro
+      - ./data:/data
+    depends_on:
+      - searxng
+
+  # 自建元搜索引擎，只在 compose 内部网络开放，不对外暴露端口
+  searxng:
+    image: searxng/searxng:latest
+    restart: unless-stopped
+    volumes:
+      - ./searxng:/etc/searxng
